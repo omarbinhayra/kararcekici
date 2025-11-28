@@ -1,0 +1,1236 @@
+<!doctype html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Hukuk Eğitim</title>
+    <style>
+        :root{
+          --bg:#ffffff;         /* sayfa arkaplanı (açık) */
+          --sidebar-width: 380px; /* sidebar varsayılan genişlik */
+          --sidebar-expanded-width: 520px; /* genişletilmiş genişlik */
+          --card:#ffffff;       /* kart arkaplanı (açık) */
+          --muted:#22252a;      /* metin için koyu renk */
+          --accent:#ff7a18;     /* turuncu ana renk */
+          --accent-dark:#b03500;/* koyu turuncu vurgu */
+          --border:#e6e6e6;
+          --glass: rgba(0,0,0,0.03);
+        }
+
+        *{box-sizing:border-box}
+        body {
+          font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+          margin: 0;
+          padding: 0;
+          background: linear-gradient(180deg,#ffffff, #fbfaf9);
+          color: var(--muted);
+          -webkit-font-smoothing:antialiased;
+        }
+
+        header {
+          background: linear-gradient(90deg, rgba(255,122,24,0.06), rgba(255,255,255,0.9));
+          color: var(--muted);
+          padding: 22px 16px;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          border-bottom:1px solid rgba(0,0,0,0.04);
+        }
+        header h1 {
+          margin:0;
+          font-size:28px;
+          letter-spacing:0.4px;
+          color:var(--accent);
+          text-shadow: 0 2px 6px rgba(255,122,24,0.06);
+        }
+
+         .container {
+   max-width:960px;
+   margin:28px auto;
+   padding:0 18px;
+ }
+ .container {
+   max-width:1180px;
+   margin:28px auto;
+   padding:0 18px;
+   display:grid;
+   grid-template-columns: var(--sidebar-width) 1fr;
+    gap:20px;
+    align-items:start;
+  }
+ /* filtre sidebar */
+ .sidebar-filters {
+   position:relative;
+   top:0;
+   align-self:start;
+   padding:16px;
+   border-radius:12px;
+   background:linear-gradient(180deg,#fff,#fff);
+   border:1px solid var(--border);
+   box-shadow: 0 8px 20px rgba(16,24,40,0.04);
+   height:fit-content;
+   display:flex;
+   flex-direction:column;
+   gap:10px;
+   transition: width .18s ease, transform .12s ease;
+   width: 100%;
+   min-width: 0;
+ }
+ .sidebar-filters .group { display:flex; flex-direction:column; gap:6px; margin-bottom:6px; }
+ .sidebar-filters label { font-size:13px; color:#444; font-weight:700; }
+ .sidebar-filters input[type="text"], .sidebar-filters select, .sidebar-filters input[type="date"]{
+   padding:8px 10px; border-radius:8px; border:1px solid rgba(0,0,0,0.06); background:#fff;
+ }
+ /* çoklu seçim (hukuk daireleri) için daha iyi görünüm */
+ .sidebar-filters select[multiple] {
+   min-height:130px;
+   padding:8px;
+   height:auto;
+   overflow:auto;
+   background:#fff;
+ }
+
+        .search-box {
+          display:flex;
+          gap:10px;
+          align-items:center;
+          background: linear-gradient(180deg, #fff, #fbfbfb);
+          border:1px solid var(--border);
+          padding:12px;
+          border-radius:12px;
+        }
+
+        .search-box input[type="search"]{
+          flex:1;
+          padding:12px 14px;
+          font-size:15px;
+          border-radius:10px;
+          border:1px solid rgba(0,0,0,0.06);
+          background: #fff;
+          color:var(--muted);
+          outline: none;
+        }
+
+        .search-box input[type="search"]::placeholder{ color: rgba(34,37,42,0.45); }
+
+        .search-box button {
+          padding:10px 16px;
+          font-size:15px;
+          border:none;
+          background: linear-gradient(180deg, var(--accent), var(--accent-dark));
+          color:#fff;
+          border-radius:10px;
+          cursor:pointer;
+          font-weight:600;
+          box-shadow: 0 6px 20px rgba(176,53,0,0.12), inset 0 -2px 6px rgba(0,0,0,0.06);
+        }
+        .search-box button:hover { transform: translateY(-1px); }
+
+        #search-results {
+          margin-top:18px;
+          padding:16px;
+          background: linear-gradient(180deg, #ffffff, #fbfbfb);
+          border-radius:10px;
+          min-height:80px;
+          border:1px solid var(--border);
+          color:var(--muted);
+        }
+
+        .label { font-weight:700; margin-bottom:8px; display:block; color:var(--muted); }
+
+        /* sonuç kartları */
+        .result-card {
+          background: linear-gradient(180deg,#ffffff, #fcfcfc);
+          padding:14px;
+          border-radius:10px;
+          position: relative; /* buton için göreli konteyner */
+          box-shadow: 0 6px 18px rgba(16,24,40,0.06);
+          margin-bottom:14px;
+          border:1px solid rgba(0,0,0,0.04);
+        }
+        .result-head { display:flex; align-items:center; gap:12px; justify-content:space-between; }
+        .result-title { margin:0; font-size:16px; color:var(--accent); font-weight:700; }
+        .badge {
+          background: rgba(255,122,24,0.12);
+          color: var(--accent-dark);
+          padding:6px 10px;
+          border-radius:999px;
+          font-weight:700;
+          font-size:13px;
+          border:1px solid rgba(255,122,24,0.10);
+        }
+
+        .meta {
+          color: #4b5563;
+          font-size:13px;
+          margin-top:8px;
+          display:flex;
+          gap:10px;
+          flex-wrap:wrap;
+          align-items:center;
+        }
+        .meta span {
+          background: rgba(34,37,42,0.03);
+          padding:6px 8px;
+          border-radius:8px;
+          border:1px solid rgba(0,0,0,0.04);
+          color: #374151;
+        }
+
+        .snippet {
+          margin-top:10px;
+          color:#374151;
+          font-size:14px;
+        }
+        .download-pdf {
+          position: absolute;
+          left: 14px;               /* kartın en alt-solda pozisyonlandırma (go-detail sağda) */
+          bottom: 14px;
+          z-index: 5;
+          min-width: 140px;
+          padding: 12px 16px;      /* daha büyük, okunabilir */
+          font-size: 15px;
+          border-radius: 14px;
+          border: none;
+          cursor: pointer;
+          font-weight: 700;
+          color: #fff;
+          background: linear-gradient(90deg, #ff4b4b 0%, #ff1f1f 50%, #b71c1c 100%);
+          background-size: 200% 100%;
+          box-shadow: 0 12px 26px rgba(183,24,24,0.14);
+          transition: transform .18s ease, box-shadow .18s ease;
+          display:inline-flex;
+          gap:8px;
+          align-items:center;
+          text-align:center;
+          text-decoration:none;
+          -webkit-appearance: none;
+        }
+        .download-pdf:hover { transform: translateY(-6px); box-shadow: 0 22px 36px rgba(183,24,24,0.18); }
+        .download-pdf:active { transform: translateY(-1px); }
+        .download-pdf:focus { outline: 3px solid rgba(255,50,50,0.14); outline-offset:2px; }
+        @keyframes gradientShiftRed { 0%{ background-position:0% 50% } 50%{ background-position:100% 50% } 100%{ background-position:0% 50% } }
+        .download-pdf { animation: gradientShiftRed 6s linear infinite; }
+
+        /* animasyonlu gradyen "Detayına git" butonu */
+        .go-detail {
+          text-decoration: none;
+          padding:14px 18px;           /* daha büyük */
+          font-size:15px;              /* daha okunabilir */
+          border-radius:14px;
+          position: absolute;          /* en aşağı sağda konumla */
+          right: 14px;
+          bottom: 14px;
+          z-index: 6;
+          min-width: 140px;
+          justify-content: center;
+          text-align: center;
+          box-shadow: 0 12px 26px rgba(176,53,0,0.14);
+           border: none;
+           cursor:pointer;
+           font-weight:700;
+           color: #fff;
+           background: linear-gradient(90deg, #ff7a18 0%, #ffb86b 50%, #ffcc88 100%);
+           background-size: 200% 100%;
+           transition: transform .18s ease, box-shadow .18s ease;
+           display:inline-flex;
+           gap:8px;
+           align-items:center;
+         }
+        .go-detail:hover { transform: translateY(-6px); box-shadow: 0 22px 36px rgba(176,53,0,0.18); }
+        .go-detail:active { transform: translateY(-1px); }
+        .go-detail:focus { outline: 3px solid rgba(255,122,24,0.18); outline-offset:2px; }
+        @keyframes gradientShift { 0%{ background-position:0% 50% } 50%{ background-position:100% 50% } 100%{ background-position:0% 50% } }
+        .go-detail { animation: gradientShift 6s linear infinite; }
+
+        .toggle-json {
+          margin-top:10px;
+          background: transparent;
+          border:1px solid rgba(255,122,24,0.10);
+          padding:8px 10px;
+          border-radius:8px;
+          cursor:pointer;
+          font-size:13px;
+          color:var(--accent-dark);
+        }
+
+        pre.json {
+          background: #f7f7f7;
+          color:#0b0b0b;
+          padding:12px;
+          border-radius:8px;
+          overflow:auto;
+          max-height:280px;
+          margin-top:10px;
+          display:none;
+          border:1px solid rgba(0,0,0,0.04);
+        }
+
+        mark { background: rgba(255,122,24,0.18); padding:0 4px; border-radius:3px; color: #2b0b00; }
+
+        /* detay / karar metni görünümü */
+        .detail {
+          margin-top:10px;
+          margin-bottom: 60px;
+          padding:10px;
+          border-radius:8px;
+          border:1px solid rgba(255,122,24,0.10);
+          color: #3b2a12;
+          font-size:14px;
+          line-height:1.45;
+        }
+        .detail.loading { opacity:0.9; color:#8a6a3a; }
+        .detail.error { background:#fff1f1; border-color:rgba(220,38,38,0.08); color:#7b1e1e; }
+
+        /* renderlenen HTML detayları için temizlenmiş görünüm */
+        .detail-html {
+          margin-top:8px;
+          color: #222;
+          padding:12px;
+          border-radius:8px;
+          border:1px solid rgba(0,0,0,0.04);
+          max-height:200px;
+          overflow:auto;
+          font-family: "Segoe UI", Roboto, Arial, sans-serif;
+          font-size:14px;
+          line-height:1.45;
+        }
+        .detail-html h1, .detail-html h2, .detail-html h3 { color: var(--accent-dark); margin-top:0; }
+        .detail-html ol, .detail-html ul { padding-left:22px; color:#333; }
+        .detail-html pre { background: #f3f3f3; padding:8px; border-radius:6px; overflow:auto; }
+
+        /* multi-select UI */
+        .multi-select { position:relative; font-size:14px; }
+        .multi-select .ms-toggle { width:100%; text-align:left; padding:10px; border-radius:8px; border:1px solid rgba(0,0,0,0.06); background:#fff; display:flex; justify-content:space-between; gap:8px; align-items:center; cursor:pointer; }
+        .multi-select .ms-count { color:var(--muted); font-weight:700; font-size:13px; opacity:0.95 }
+        .multi-select .ms-panel { position:absolute; left:0; right:0; top:calc(100% + 8px); z-index:80; background:#fff; border-radius:10px; border:1px solid rgba(0,0,0,0.06); box-shadow:0 18px 40px rgba(0,0,0,0.06); display:none; }
+        .multi-select .ms-panel[aria-hidden="false"]{ display:block }
+        .ms-search { padding:8px 10px; border-radius:8px; border:1px solid rgba(0,0,0,0.06); width:240px; }
+        .ms-actions button { padding:8px 10px; border-radius:8px; border:1px solid rgba(0,0,0,0.06); background:transparent; cursor:pointer; }
+        .ms-list li { display:flex; gap:8px; align-items:center; padding:8px 6px; border-radius:6px; cursor:pointer; }
+        .ms-list li:hover { background:rgba(0,0,0,0.02) }
+        .ms-list input[type="checkbox"]{ width:16px; height:16px; }
+        .ms-list .label { color:#333; font-weight:600 }
+        .ms-list .muted { color:var(--muted); font-size:12px; margin-left:auto }
+    </style>
+  </head>
+  <body>
+    <header>
+        <h1>İçtihat Bilgi Bankası</h1>
+    </header>
+
+    <main class="container">
+       <aside class="sidebar-filters" aria-label="Filtreler">
+             <div class="group">
+               <label for="filter-keyword">Aranacak Kelime</label>
+               <input id="filter-keyword" type="text" placeholder="Anahtar kelime girin (örn. içtihat)" />
+             </div>
+             <div class="group">
+               <label>Kurullar</label>
+               <!-- gizli native select (payload için) -->
+               <select id="filter-kurul" multiple aria-label="Kurullar (çoklu seçim)" style="display:none;">
+                 <option value="Hukuk Genel Kurulu">Hukuk Genel Kurulu</option>
+                 <option value="Ceza Genel Kurulu">Ceza Genel Kurulu</option>
+                 <option value="Ceza Daireleri Başkanlar Kurulu">Ceza Daireleri Başkanlar Kurulu</option>
+                 <option value="Hukuk Daireleri Başkanlar Kurulu">Hukuk Daireleri Başkanlar Kurulu</option>
+                 <option value="Büyük Genel Kurulu">Büyük Genel Kurulu</option>
+               </select>
+
+               <!-- searchable multi-select UI for kurullar -->
+               <div class="multi-select" id="ms-kurul" aria-haspopup="listbox">
+                 <button type="button" class="ms-toggle" aria-expanded="false">
+                   <span class="ms-label">Kurul seçiniz</span>
+                   <span class="ms-count" aria-hidden="true"></span>
+                 </button>
+                 <div class="ms-panel" role="listbox" aria-hidden="true">
+                   <div class="ms-actions" style="display:flex;gap:8px;padding:8px;border-bottom:1px solid rgba(0,0,0,0.04)">
+                     <input class="ms-search" placeholder="Ara..." aria-label="Kurul ara" />
+                     <div style="display:flex;gap:6px">
+                       <button type="button" class="ms-select-all">Hepsini Seç</button>
+                       <button type="button" class="ms-clear">Temizle</button>
+                     </div>
+                   </div>
+                   <ul class="ms-list" style="list-style:none;margin:0;padding:8px;max-height:260px;overflow:auto"></ul>
+                 </div>
+               </div>
+             </div>
+             <div class="group">
+               <label>Hukuk Dairesi</label>
+               <div class="filters-row">
+                 <!-- gizli native select (payload için güncellenecek) -->
+                 <select id="filter-hukuk" multiple aria-label="Hukuk Daireleri (çoklu seçim)" style="display:none;">
+                   <option value="1. Hukuk Dairesi">1. Hukuk Dairesi</option>
+                   <option value="2. Hukuk Dairesi">2. Hukuk Dairesi</option>
+                   <option value="3. Hukuk Dairesi">3. Hukuk Dairesi</option>
+                   <option value="4. Hukuk Dairesi">4. Hukuk Dairesi</option>
+                   <option value="5. Hukuk Dairesi">5. Hukuk Dairesi</option>
+                   <option value="6. Hukuk Dairesi">6. Hukuk Dairesi</option>
+                   <option value="7. Hukuk Dairesi">7. Hukuk Dairesi</option>
+                   <option value="8. Hukuk Dairesi">8. Hukuk Dairesi</option>
+                   <option value="9. Hukuk Dairesi">9. Hukuk Dairesi</option>
+                   <option value="10. Hukuk Dairesi">10. Hukuk Dairesi</option>
+                   <option value="11. Hukuk Dairesi">11. Hukuk Dairesi</option>
+                   <option value="12. Hukuk Dairesi">12. Hukuk Dairesi</option>
+                   <option value="13. Hukuk Dairesi">13. Hukuk Dairesi</option>
+                   <option value="14. Hukuk Dairesi">14. Hukuk Dairesi</option>
+                   <option value="15. Hukuk Dairesi">15. Hukuk Dairesi</option>
+                   <option value="16. Hukuk Dairesi">16. Hukuk Dairesi</option>
+                   <option value="17. Hukuk Dairesi">17. Hukuk Dairesi</option>
+                   <option value="18. Hukuk Dairesi">18. Hukuk Dairesi</option>
+                   <option value="19. Hukuk Dairesi">19. Hukuk Dairesi</option>
+                   <option value="20. Hukuk Dairesi">20. Hukuk Dairesi</option>
+                   <option value="21. Hukuk Dairesi">21. Hukuk Dairesi</option>
+                   <option value="22. Hukuk Dairesi">22. Hukuk Dairesi</option>
+                   <option value="23. Hukuk Dairesi">23. Hukuk Dairesi</option>
+                 </select>
+
+                 <!-- custom searchable multi-select UI -->
+                 <div class="multi-select" id="ms-hukuk" aria-haspopup="listbox">
+                   <button type="button" class="ms-toggle" aria-expanded="false">
+                     <span class="ms-label">Hukuk Dairesi seçiniz</span>
+                     <span class="ms-count" aria-hidden="true"></span>
+                   </button>
+                   <div class="ms-panel" role="listbox" aria-hidden="true">
+                     <div class="ms-actions" style="display:flex;gap:8px;padding:8px;border-bottom:1px solid rgba(0,0,0,0.04)">
+                       <input class="ms-search" placeholder="Ara..." aria-label="Hukuk dairesi ara" />
+                       <div style="display:flex;gap:6px">
+                         <button type="button" class="ms-select-all">Hepsini Seç</button>
+                         <button type="button" class="ms-clear">Temizle</button>
+                       </div>
+                     </div>
+                     <ul class="ms-list" style="list-style:none;margin:0;padding:8px;max-height:260px;overflow:auto"></ul>
+                   </div>
+                 </div>
+               <label style="margin-top: 10px;">Ceza Dairesi</label>
+
+                 <!-- gizli native select (payload için) -->
+                 <select id="filter-ceza" multiple aria-label="Ceza Daireleri (çoklu seçim)" style="display:none;">
+                   <option value="1. Ceza Dairesi">1. Ceza Dairesi</option>
+                   <option value="2. Ceza Dairesi">2. Ceza Dairesi</option>
+                   <option value="3. Ceza Dairesi">3. Ceza Dairesi</option>
+                   <option value="4. Ceza Dairesi">4. Ceza Dairesi</option>
+                   <option value="5. Ceza Dairesi">5. Ceza Dairesi</option>
+                   <option value="6. Ceza Dairesi">6. Ceza Dairesi</option>
+                   <option value="7. Ceza Dairesi">7. Ceza Dairesi</option>
+                   <option value="8. Ceza Dairesi">8. Ceza Dairesi</option>
+                   <option value="9. Ceza Dairesi">9. Ceza Dairesi</option>
+                   <option value="10. Ceza Dairesi">10. Ceza Dairesi</option>
+                   <option value="11. Ceza Dairesi">11. Ceza Dairesi</option>
+                   <option value="12. Ceza Dairesi">12. Ceza Dairesi</option>
+                   <option value="13. Ceza Dairesi">13. Ceza Dairesi</option>
+                   <option value="14. Ceza Dairesi">14. Ceza Dairesi</option>
+                   <option value="15. Ceza Dairesi">15. Ceza Dairesi</option>
+                   <option value="16. Ceza Dairesi">16. Ceza Dairesi</option>
+                   <option value="17. Ceza Dairesi">17. Ceza Dairesi</option>
+                   <option value="18. Ceza Dairesi">18. Ceza Dairesi</option>
+                   <option value="19. Ceza Dairesi">19. Ceza Dairesi</option>
+                   <option value="20. Ceza Dairesi">20. Ceza Dairesi</option>
+                   <option value="21. Ceza Dairesi">21. Ceza Dairesi</option>
+                   <option value="22. Ceza Dairesi">22. Ceza Dairesi</option>
+                   <option value="23. Ceza Dairesi">23. Ceza Dairesi</option>
+                 </select>
+
+                 <!-- searchable multi-select UI for ceza -->
+                 <div class="multi-select" id="ms-ceza" aria-haspopup="listbox" >
+                   <button type="button" class="ms-toggle" aria-expanded="false">
+                     <span class="ms-label">Ceza Dairesi seçiniz</span>
+                     <span class="ms-count" aria-hidden="true"></span>
+                   </button>
+                   <div class="ms-panel" role="listbox" aria-hidden="true">
+                     <div class="ms-actions" style="display:flex;gap:8px;padding:8px;border-bottom:1px solid rgba(0,0,0,0.04)">
+                       <input class="ms-search" placeholder="Ara..." aria-label="Ceza dairesi ara" />
+                       <div style="display:flex;gap:6px">
+                         <button type="button" class="ms-select-all">Hepsini Seç</button>
+                         <button type="button" class="ms-clear">Temizle</button>
+                       </div>
+                     </div>
+                     <ul class="ms-list" style="list-style:none;margin:0;padding:8px;max-height:260px;overflow:auto"></ul>
+                   </div>
+                 </div>
+               </div>
+             </div>
+             <div class="group">
+               <label>Esas No (yıl / sıra aralığı)</label>
+               <div class="filters-row">
+                 <input id="filter-esas-yil-from" type="text" placeholder="Yıl" style="width:80px" />
+                 <input id="filter-esas-no-from" type="text" placeholder="ilk sıra" style="flex:1" />
+               </div>
+               <div class="filters-row">
+                 <input id="filter-esas-no-to" type="text" placeholder="son sıra" style="flex:1" />
+               </div>
+             </div>
+             <div class="group">
+               <label>Karar No (yıl / sıra aralığı)</label>
+               <div class="filters-row">
+                 <input id="filter-karar-yil" type="text" placeholder="Yıl" style="width:80px" />
+                 <input id="filter-karar-no-from" type="text" placeholder="ilk sıra" style="flex:1" />
+               </div>
+               <div class="filters-row">
+                 <input id="filter-karar-no-to" type="text" placeholder="son sıra" style="flex:1" />
+               </div>
+             </div>
+             <div class="group">
+               <label>Karar Tarihi</label>
+               <div class="filters-row">
+                 <input id="filter-date-from" type="date" />
+                 <input id="filter-date-to" type="date" />
+               </div>
+             </div>
+             <div class="group">
+               <label>Sıralama</label>
+               <div style="display:flex;gap:6px;align-items:center">
+                 <label><input type="radio" name="sort" value="esas" checked /> Esas No</label>
+                 <label><input type="radio" name="sort" value="karar" /> Karar No</label>
+                 <label><input type="radio" name="sort" value="tarih" /> Tarih</label>
+               </div>
+                <div style="display:flex;gap:6px;align-items:center;margin-top:20px">
+                 <label><input type="radio" name="sortDirection" value="desc" checked /> Büyükten Küçüğe</label>
+                 <label><input type="radio" name="sortDirection" value="asc" /> Küçükten Büyüğe</label>
+               </div>
+             </div>
+             <div class="filters-actions">
+               <button id="filters-reset" class="toggle-json">Temizle</button>
+               <button id="filters-apply" class="btnarafilter" type="button">Ara</button>
+             </div>
+           </aside>
+      <section aria-labelledby="ara-title">
+          <span class="label" id="ara-title">Ara</span>
+          <form id="search-form" class="search-box" role="search">
+              <input id="search-input" type="search" name="q" placeholder="Anahtar kelime girin..." aria-label="Arama" />
+              <button class="btnaramain" type="button">Ara</button>
+          </form>
+            <div id="results-summary" style="display:none;margin-top:8px;color:var(--muted);font-size:13px;">
+               Toplam: <strong id="results-count">—</strong> karar 
+           </div>
+            <div id="search-results" aria-live="polite">
+                Arama sonuçları burada gösterilecek.
+            </div>
+            <!-- sonuç özeti: toplam karar sayısı -->
+            <div id="results-summary" style="display:none;margin-top:8px;color:var(--muted);font-size:13px;">
+                Toplam: <strong id="results-count">—</strong> karar — <span id="results-pages" style="opacity:0.85"></span>
+            </div>
+
+            <!-- Yeni: sayfa kontrolü -->
+            <div id="pagination" style="display:none;margin-top:12px;align-items:center;gap:8px;">
+                <button id="prev-page" disabled style="padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:#fff;cursor:pointer">Önceki</button>
+                <button id="next-page" style="padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:linear-gradient(180deg,var(--accent),var(--accent-dark));color:#fff;cursor:pointer">Sıradaki</button>
+                <div style="margin-left:12px;color:var(--muted);">Sayfa: <strong id="current-page">1</strong></div>
+            </div>
+        </section>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- html2pdf: DOM -> PDF (küçük, yaygın kullanılan kütüphane) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+    <script>
+      const btnara = document.querySelector('.btnaramain');
+      const btnarafilter = document.querySelector('.btnarafilter');
+      const results = document.getElementById('search-results');
+      let cezalist=[];
+      let kurullarlist=[];
+      let hukuklist=[];
+      // Yeni pagination kontrol değişkenleri
+      const paginationEl = document.getElementById('pagination');
+      const prevBtn = document.getElementById('prev-page');
+      const nextBtn = document.getElementById('next-page');
+      const currentPageSpan = document.getElementById('current-page');
+
+      let controller = null;
+      let currentPage = 1;
+      // true = filtrelenmiş detay araması etkin -> next/prev filtre fetch çağırır
+      let isFilteredMode = false;
+      const pageSize = 10;
+      window.__itemsMap = window.__itemsMap || {};
+
+      function escapeHtml(str) {
+        return String(str || '').replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
+      }
+
+      function highlight(text, term) {
+        if (!term) return escapeHtml(text);
+        const re = new RegExp(term.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'), 'gi');
+        return escapeHtml(text).replace(re, m => `<mark>${escapeHtml(m)}</mark>`);
+      }
+
+      function renderItem(item, searchTerm) {
+        const title = `${item.kararNo || ''}K.`;
+        const snippet = item.arananKelime ? `Aranan kelime: ${highlight(item.arananKelime, searchTerm)}` : '';
+        const meta = [
+          ['Daire', item.daire],
+          ['Esas No', item.esasNo]
+        ].map(([k,v]) => `<span title="${escapeHtml(k)}">${escapeHtml(k)}: ${escapeHtml(v || '')}</span>`).join('');
+
+        // burada her item için bir detay konteyneri ekliyoruz
+        return `
+          <article class="result-card" data-id="${escapeHtml(item.id)}" tabindex="0" role="link">
+            <div class="result-head" style="justify-content:space-between;align-items:center;">
+              <h1 class="result-title" style="margin:0">${escapeHtml(item.daire || '')}   ${escapeHtml(item.esasNo || '')}E.   ${escapeHtml(title || '')} - ${escapeHtml(item.kararTarihi || '')}</h2>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <!-- yeni sekmede açılacak büyük buton -->
+                <a class="go-detail" href="/detay/${escapeHtml(item.id)}" target="_blank" rel="noopener noreferrer" data-id="${escapeHtml(item.id)}" aria-label="Detayına git">Detayına git</a>
+              </div>
+            </div>
+            <div class="meta">${meta}</div>
+            <div class="snippet">${snippet}</div>
+
+            <!-- karar detayı buraya yüklenecek -->
+            <div id="detail-${escapeHtml(item.id)}" class="detail loading">Yükleniyor...</div>
+            <button class="download-pdf" data-id="${escapeHtml(item.id)}" aria-label="PDF indir">PDF indir</button>
+          </article>
+        `;
+      }
+
+      // detail cache & controllers
+      window.__detailCache = window.__detailCache || {};
+      window.__detailControllers = window.__detailControllers || {};
+
+      async function fetchDetailForItem(itemId) {
+        const container = document.getElementById(`detail-${itemId}`);
+        if (!container) return;
+
+        // eğer önceden cache varsa göster
+        if (window.__detailCache[itemId]) {
+          renderDetail(container, window.__detailCache[itemId]);
+          return;
+        }
+
+        // varsa önceki isteği iptal et
+        const prev = window.__detailControllers[itemId];
+        if (prev) prev.abort();
+
+        const controller = new AbortController();
+        window.__detailControllers[itemId] = controller;
+
+        const url = 'https://axxlblgd.rpcld.app/webhook/getkarar';
+        const payload = { data: { id: Number(itemId) } };
+
+        container.classList.remove('error');
+        container.classList.add('loading');
+        container.innerText = 'Detay yükleniyor...';
+
+        try {
+          const resp = await axios.post(url, payload, {
+            headers: { 'Content-Type': 'application/json' },
+            signal: controller.signal
+          });
+          const data = resp?.data ?? resp;
+          // cachele ve döndür (PDF için tam içeriğe erişmek gerekiyor)
+          window.__detailCache[itemId] = resp.data[0].data;
+          renderDetail(container, resp.data[0].data);
+          return window.__detailCache[itemId];
+        } catch (err) {
+          console.error('detail fetch error', itemId, err);
+          if (err?.name === 'CanceledError' || err?.name === 'AbortError' || err?.code === 'ERR_CANCELED') {
+            // iptal edildi — sessiz kal
+            container.innerText = 'İstek iptal edildi.';
+            container.classList.remove('loading');
+            return;
+          }
+          container.classList.remove('loading');
+          container.classList.add('error');
+          // CORS veya ağ hatası durumunda daha açıklayıcı göster
+          container.innerHTML = '<strong>Detay alınamadı.</strong><div style="margin-top:6px;font-size:13px;color:#7a3b3b;">' + escapeHtml(err?.message || String(err)) + '</div>';
+        } finally {
+          // temizleme
+          if (window.__detailControllers[itemId] === controller) delete window.__detailControllers[itemId];
+          // eğer bir şey döndürülmediyse cache'deki değeri döndür
+          if (window.__detailCache[itemId]) return window.__detailCache[itemId];
+           }
+      }
+
+      // Basit HTML temizleyici (backend'den gelen ham HTML'leri daha güvenli hale getirir)
+      function sanitizeHtml(input) {
+        if (!input) return '';
+        let html = String(input);
+        // strip dangerous tags with content
+        html = html.replace(/<(script|iframe|object|embed|link|style|form)[^>]*>[\s\S]*?<\/\1>/gi, '');
+        // strip dangerous self-closing tags
+        html = html.replace(/<(script|iframe|object|embed|link|style)[^>]*\/?>/gi, '');
+        // remove inline event handlers like onclick
+        html = html.replace(/\s(on\w+)=(".*?"|'.*?'|\S+)/gi, '');
+        // remove javascript: URIs
+        html = html.replace(/\s(href|src)\s*=\s*(['"])\s*javascript:[^'"]*\2/gi, '');
+        return html;
+      }
+
+      function renderDetail(container, data) {
+        container.classList.remove('loading','error');
+
+        // Gelen veri farklı biçimlerde olabilir:
+        // - string (bazen tamamen HTML dokümanı)
+        // - obje { data: { kararMetni: "..." } } veya { karar: "..." } vb.
+        let maybe = data;
+        if (data && typeof data === 'object' && data.data) maybe = data.data;
+
+        // Eğer bir string gelmişse — HTML içeriğini göstermek için sanitize edip doğrudan renderle
+        if (typeof maybe === 'string') {
+          const raw = maybe.trim();
+          // küçük metin (düz metin) ise escape ile göster; HTML dokümanı veya büyük içerik ise sanitize edip html olarak yaz
+          const looksLikeHtml = /<\/?[a-z][\s\S]*>/i.test(raw);
+          if (looksLikeHtml) {
+            container.innerHTML = `<div class="detail-html">${sanitizeHtml(raw)}</div>`;
+            return;
+          } else {
+            container.innerHTML = `<pre>${escapeHtml(raw)}</pre>`;
+            return;
+          }
+        }
+
+        // Eğer obje geldiyse, karar metni alanlarını dene
+        const kararMetni = maybe?.kararMetni ?? maybe?.karar ?? maybe?.metin ?? maybe?.text ?? null;
+        if (kararMetni) {
+          if (typeof kararMetni === 'string' && /<\/?[a-z][\s\S]*>/i.test(kararMetni.trim())) {
+            // karar metni HTML içeriyor
+            container.innerHTML = `<div class="detail-html">${sanitizeHtml(kararMetni)}</div>`;
+          } else {
+            // düz metin ise escape edip göster
+            container.innerHTML = `<div class="detail-html"><pre style="margin:0;background:transparent;border:none;padding:0">${escapeHtml(String(kararMetni))}</pre></div>`;
+          }
+          return;
+        }
+
+        // fallback: gösterilebilecek herhangi bir JSON alanı varsa önizleme ver
+        const raw = JSON.stringify(data, null, 2);
+        container.innerHTML = `<div class="detail-html"><pre>${escapeHtml(raw)}</pre></div>`;
+      }
+fetchAndRender()
+      // Ortak fetch fonksiyonu (page parametreli)
+      async function fetchAndRender(page = 1) {
+        const arananKelime = document.getElementById('search-input').value || 'içtihat';
+        const url = "https://axxlblgd.rpcld.app/webhook/getlist";
+        const payload = {
+          data: {
+            aranan: arananKelime,
+            arananKelime,
+            pageSize,
+            pageNumber: page
+          }
+        };
+
+        // iptal varsa iptal et
+        if (controller) controller.abort();
+        controller = new AbortController();
+
+        results.innerHTML = 'Gönderiliyor...';
+
+        try {
+          const response = await axios.post(url, payload, { headers: { 'Content-Type': 'application/json' } });
+
+          const data = response.data;
+          // recordsTotal -> toplam karar sayısı (çeşitli şekillerde gelebilir)
+          const rawTotal = data.recordsTotal ?? data.data?.recordsTotal ?? data.total ?? data.count ?? null;
+          const totalCount = Number.isFinite(Number(rawTotal)) ? Number(rawTotal) : null;
+          const summaryEl = document.getElementById('results-summary');
+          const countEl = document.getElementById('results-count');
+          const totalPagesEl = document.getElementById('total-pages');
+          if (totalCount !== null) {
+            summaryEl.style.display = '';
+            countEl.textContent = totalCount.toLocaleString();
+            // bilgi metni (opsiyonel)
+            const pagesInfo = document.getElementById('results-pages');
+       
+          }
+
+          // aynı önceki kontroller
+          let items = null;
+          if (Array.isArray(data)) items = data;
+          else if (Array.isArray(data.items)) items = data.items;
+          else if (Array.isArray(data.data?.items)) items = data.data.items;
+          else if (Array.isArray(data.result?.items)) items = data.result.items;
+          else if (Array.isArray(data.results)) items = data.results;
+          else if (Array.isArray(data.hits?.hits)) items = data.hits.hits.map(h => h._source || h);
+          else if (data && typeof data === 'object' && (data.id || data.kararNo)) items = [data];
+          else if (data && typeof data === 'object' && Array.isArray(Object.values(data).find(v => Array.isArray(v)))) {
+            const arr = Object.values(data).find(v => Array.isArray(v));
+            items = arr || null;
+          }
+
+          if (!items || items.length === 0) {
+            results.innerHTML = `<div>Sonuç bulunamadı.</div><pre style="white-space:pre-wrap;max-height:300px;overflow:auto;background:#f7f7f7;padding:8px;border-radius:6px;">${escapeHtml(JSON.stringify(data, null, 2))}</pre>`;
+            paginationEl.style.display = 'none';
+            return;
+          }
+
+          // map'e ekle (hash routing veya detail için)
+          items.forEach(it => { if (it?.id) window.__itemsMap[it.id] = it; });
+
+          // render
+          results.innerHTML = items.map(it => renderItem(it, arananKelime)).join('');
+          // pagination görünür ve buton durumu ayarlanır
+          paginationEl.style.display = '';
+          currentPage = page;
+          currentPageSpan.innerText = String(currentPage);
+          prevBtn.disabled = currentPage <= 1;
+          // next butonunu, dönen öğe sayısı pageSize'tan azsa pasifleştir
+          nextBtn.disabled = !items.length || items.length < pageSize;
+
+          // her item renderlandıktan sonra detayları yükle (paralel)
+          items.forEach(it => { if (it?.id) fetchDetailForItem(it.id); });
+          
+          // görünür yap pagination
+          paginationEl.style.display = '';
+          currentPage = page;
+          currentPageSpan.innerText = String(currentPage);
+          prevBtn.disabled = currentPage <= 1;
+          // next butonunu, dönen öğe sayısı pageSize'tan azsa pasifleştir
+          nextBtn.disabled = !items.length || items.length < pageSize;
+
+        } catch (err) {
+          console.error('İstek hatası:', err);
+          if (err?.code === 'ERR_CANCELED' || err?.name === 'CanceledError' || err?.name === 'AbortError') {
+            results.textContent = 'İstek iptal edildi.';
+            return;
+          }
+          results.textContent = 'Hata: ' + (err.message || err);
+          paginationEl.style.display = 'none';
+        }
+      }
+
+      // Ara butonu: yeni arama -> page = 1
+      btnara.addEventListener('click', () => {
+        isFilteredMode = false;
+        currentPage = 1;
+        fetchAndRender(currentPage);
+      });
+ 
+      // Filtreyle detaylı arama -> ayrı endpoint
+      btnarafilter.addEventListener('click', () => {
+        isFilteredMode = true;
+        currentPage = 1;
+        fetchFilteredDetails(1);
+      });
+
+      // ayrı fetch için helper + istek
+      async function fetchFilteredDetails(page = 1) {
+        const url = 'https://axxlblgd.rpcld.app/webhook/getdetaylikarar';
+        function fmtDate(v){
+          if (!v) return '';
+          const parts = String(v).split('-');
+          if (parts.length !== 3) return v;
+          return `${parts[2]}.${parts[1]}.${parts[0]}`;
+        }
+
+        // seçilen çoklu değerler (multi-select UI ile sync edilmiş global array'ler)
+        const selectedKurul = Array.isArray(kurullarlist) && kurullarlist.length ? kurullarlist : Array.from(document.getElementById('filter-kurul')?.selectedOptions || []).map(o=>o.value).filter(Boolean);
+        const selectedHukuk = Array.isArray(hukuklist) && hukuklist.length ? hukuklist : Array.from(document.getElementById('filter-hukuk')?.selectedOptions || []).map(o=>o.value).filter(Boolean);
+        const selectedCeza = Array.isArray(cezalist) && cezalist.length ? cezalist : Array.from(document.getElementById('filter-ceza')?.selectedOptions || []).map(o=>o.value).filter(Boolean);
+
+        const yargitayMah = selectedKurul.includes('Büyük Genel Kurulu') ? 'Büyük Genel Kurulu' : (selectedKurul[0] || '');
+        const hukukSingle = selectedHukuk.length ? selectedHukuk[selectedHukuk.length - 1] : '';
+        const cezaSingle = selectedCeza.length ? selectedCeza[selectedCeza.length - 1] : '';
+
+        const apiObj = {
+          data: {
+            arananKelime: (document.getElementById('filter-keyword')?.value || document.getElementById('search-input')?.value || 'içtihat'),
+            yargitayMah,
+            hukuk: hukukSingle,
+            ceza: cezaSingle,
+            esasYil: document.getElementById('filter-esas-yil-from')?.value || '',
+            esasIlkSiraNo: document.getElementById('filter-esas-no-from')?.value || '',
+            esasSonSiraNo: document.getElementById('filter-esas-no-to')?.value || '',
+            kararYil: document.getElementById('filter-karar-yil')?.value || '',
+            kararIlkSiraNo: document.getElementById('filter-karar-no-from')?.value || '',
+            kararSonSiraNo: document.getElementById('filter-karar-no-to')?.value || '',
+            baslangicTarihi: fmtDate(document.getElementById('filter-date-from')?.value),
+            bitisTarihi: fmtDate(document.getElementById('filter-date-to')?.value),
+            siralama: (function(){ const v = document.querySelector('input[name="sort"]:checked')?.value || 'tarih'; return v === 'esas' ? '1' : (v === 'karar' ? '2' : '3'); })(),
+            siralamaDirection: document.querySelector('input[name="sortDirection"]:checked')?.value || 'desc',
+            birimYrgKurulDaire: selectedKurul.join('+'),
+            birimYrgHukukDaire: selectedHukuk.join('+'),
+            birimYrgCezaDaire: selectedCeza.join('+'),
+            pageSize:10,
+            pageNumber: page
+          }
+        };
+        console.log(apiObj);
+        // gösterge
+        results.innerHTML = 'Filtrelenmiş detay isteniyor...';
+        try {
+          const resp = await axios.post(url, apiObj, { headers: { 'Content-Type':'application/json' } });
+          const data = resp.data.data.data;
+          // recordsTotal -> toplam karar sayısı (çeşitli şekillerde gelebilir)
+          const rawTotal = resp.data.data.recordsTotal ?? resp.data.data?.recordsTotal ?? resp.data.data.total ?? resp.data.data.count ?? null;
+          const totalCount = Number.isFinite(Number(rawTotal)) ? Number(rawTotal) : null;
+          const countEl = document.getElementById('results-count');
+          if (totalCount !== null) {
+            countEl.textContent = totalCount.toLocaleString();
+          }
+
+          
+          // items çıkarma mantığını reuse et
+          let items = null;
+          if (Array.isArray(data)) items = data;
+          else if (Array.isArray(data.items)) items = data.items;
+          else if (Array.isArray(data.data?.items)) items = data.data.items;
+          else if (Array.isArray(data.result?.items)) items = data.result.items;
+          else if (Array.isArray(data.results)) items = data.results;
+          else if (Array.isArray(data.hits?.hits)) items = data.hits.hits.map(h => h._source || h);
+          else if (data && typeof data === 'object' && (data.id || data.kararNo)) items = [data];
+          else if (data && typeof data === 'object' && Array.isArray(Object.values(data).find(v => Array.isArray(v)))) {
+            const arr = Object.values(data).find(v => Array.isArray(v));
+            items = arr || null;
+          }
+
+          if (!items || items.length === 0) {
+            results.innerHTML = `<div>Sonuç bulunamadı.</div><pre style="white-space:pre-wrap;max-height:300px;overflow:auto;background:#f7f7f7;padding:8px;border-radius:6px;">${escapeHtml(JSON.stringify(data, null, 2))}</pre>`;
+            paginationEl.style.display = 'none';
+            return;
+          }
+
+          items.forEach(it => { if (it?.id) window.__itemsMap[it.id] = it; });
+          results.innerHTML = items.map(it => renderItem(it, apiObj.data.arananKelime)).join('');
+          // pagination görünür ve buton durumu ayarlanır
+          paginationEl.style.display = '';
+          currentPage = page;
+          currentPageSpan.innerText = String(currentPage);
+          prevBtn.disabled = currentPage <= 1;
+          // next butonunu, dönen öğe sayısı pageSize'tan azsa pasifleştir
+          nextBtn.disabled = !items.length || items.length < pageSize;
+
+          // her item renderlandıktan sonra detayları yükle (paralel)
+          items.forEach(it => { if (it?.id) fetchDetailForItem(it.id); });
+        } catch (err) {
+          console.error('Filtered detail search error:', err);
+          results.innerHTML = 'Filtrelenmiş arama hatası — konsolu kontrol edin.';
+          paginationEl.style.display = 'none';
+         }
+      }
+
+      // Sıradaki / Önceki kontrolleri
+      nextBtn.addEventListener('click', () => {
+        currentPage = currentPage + 1;
+        if (isFilteredMode) fetchFilteredDetails(currentPage);
+        else fetchAndRender(currentPage);
+      });
+      prevBtn.addEventListener('click', () => {
+        if (currentPage > 1) {
+          currentPage = currentPage - 1;
+          if (isFilteredMode) fetchFilteredDetails(currentPage);
+          else fetchAndRender(currentPage);
+        }
+      });
+
+      // Sayfa yüklendiğinde varsayılan arama yapılabilir (opsiyonel)
+      // fetchAndRender(currentPage);
+
+      // PDF indirme: detay verisini (tam karar metnini) cache'ten veya fetch ile alıp kullanır
+      document.addEventListener('click', async (ev) => {
+        const btn = ev.target.closest?.('.download-pdf') ?? ev.target.closest('.download-pdf');
+        if (!btn) return;
+        const id = btn.dataset.id;
+
+        // öncelikle cache'ten al
+        let raw = window.__detailCache[id];
+        if (!raw) {
+          // değilse fetch et (ve cache'le)
+          raw = await fetchDetailForItem(id);
+        }
+        if (!raw) return alert('Detay yüklenemedi veya bulunamadı.');
+
+        // karar metnini seç (tam metin ; HTML veya düz metin olabilir)
+        const karar = (typeof raw === 'string') ? raw : (raw.kararMetni ?? raw.karar ?? raw.metin ?? raw.text ?? null);
+
+        // PDF içine yerleştirilecek HTML
+        let contentHtml = '';
+        if (karar) {
+          if (typeof karar === 'string' && /<\/?[a-z][\s\S]*>/i.test(karar.trim())) {
+            // aksi durumda sanitize edilmiş HTML olarak kullan (tam metin)
+            contentHtml = sanitizeHtml(karar);
+          } else {
+            // düz metin: newline -> <br> veya <pre>
+            contentHtml = '<pre style="white-space:pre-wrap; font-family: inherit; font-size:12px; line-height:1.45; margin:0;">' + escapeHtml(String(karar)) + '</pre>';
+          }
+        } else {
+          // fallback: tüm JSON'i göster
+          contentHtml = '<pre style="white-space:pre-wrap;">' + escapeHtml(JSON.stringify(raw, null, 2)) + '</pre>';
+        }
+
+        // başlık / meta
+        const title = escapeHtml(raw?.kararNo || raw?.esasNo || ('karar-' + id));
+        const date = escapeHtml(raw?.kararTarihi || raw?.tarih || '');
+
+        // wrapper oluştur
+        const wrapper = document.createElement('div');
+        wrapper.style.padding = '18px';
+        wrapper.style.fontFamily = 'DejaVu Sans, "Segoe UI", Roboto, Arial, sans-serif';
+        wrapper.style.color = '#222';
+        wrapper.innerHTML = `<div style="max-width:800px;margin:0 auto">
+          <h2 style="margin:0 0 8px 0;font-size:18px;color:#b03500">${title}${date ? ' — ' + date : ''}</h2>
+          <hr style="border:none;border-top:1px solid rgba(0,0,0,0.06);margin-bottom:12px" />
+          <div>${contentHtml}</div>
+        </div>`;
+
+        try {
+          html2pdf().set({
+            margin: 12,
+            filename: `${title.replace(/\s+/g,'_').slice(0,120)}.pdf`,
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+          }).from(wrapper).save();
+        } catch (e) {
+          console.error('PDF oluşturulamadı', e);
+          alert('PDF oluşturulurken hata oldu. Konsolu kontrol edin.');
+        }
+      });
+
+      // "Detayına git" butonu — SPA davranışı: /detay/:id ve detay yükle
+      document.addEventListener('click', (ev) => {
+        const el = ev.target.closest?.('.go-detail') ?? ev.target.closest('.go-detail');
+        if (!el) return;
+        // Eğer anchor ve yeni sekme / özel tuş ile açılacaksa (orta tuş, ctrl/meta/shift) default davranışa izin ver
+        if (el.tagName && el.tagName.toLowerCase() === 'a') {
+          if (el.target === '_blank' || ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.button === 1) return;
+        }
+        // aksi halde SPA davranışı
+        ev.preventDefault();
+        const id = el.dataset.id;
+        if (!id) return;
+        history.pushState({ view: 'detail', id }, '', `/detay/${id}`);
+        fetchDetailForItem(id).then(() => {
+          const card = document.querySelector(`[data-id="${id}"]`);
+          if (card) card.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        }).catch(() => {});
+      });
+      
+      // popstate desteği (back/forward)
+      window.addEventListener('popstate', (ev) => {
+        if (ev.state?.view === 'detail' && ev.state.id) fetchDetailForItem(ev.state.id);
+      });
+
+      // build searchable multi-select UI and sync with hidden <select id="filter-hukuk">
+    (function initMultiSelect() {
+      const select = document.getElementById('filter-hukuk');
+      if (!select) return;
+      const ms = document.getElementById('ms-hukuk');
+      const toggle = ms.querySelector('.ms-toggle');
+      const panel = ms.querySelector('.ms-panel');
+      const list = ms.querySelector('.ms-list');
+      const search = ms.querySelector('.ms-search');
+      const selectAllBtn = ms.querySelector('.ms-select-all');
+      const clearBtn = ms.querySelector('.ms-clear');
+      const label = ms.querySelector('.ms-label');
+      const countEl = ms.querySelector('.ms-count');
+
+      // populate list from native select options
+      const options = Array.from(select.options).filter(o => o.value && o.value.trim());
+      options.forEach((opt, idx) => {
+        const li = document.createElement('li');
+        li.tabIndex = 0;
+        li.dataset.value = opt.value;
+        li.innerHTML = `<input type="checkbox" aria-label="${opt.value}" ${opt.selected ? 'checked' : ''} /> <div class="label">${opt.value}</div>`;
+        list.appendChild(li);
+      });
+
+      function updateSelectedUI() {
+        const checked = Array.from(list.querySelectorAll('input[type="checkbox"]:checked')).map(c => c.parentElement.dataset.value);
+        hukuklist=checked;
+        countEl.textContent = checked.length ? `${checked.length} seçili` : '';
+        label.textContent = checked.length ? checked.slice(0,2).join(', ') + (checked.length>2 ? ' …' : '') : 'Hukuk Dairesi seçiniz';
+        // sync to native select
+        Array.from(select.options).forEach(opt => opt.selected = checked.includes(opt.value));
+      }
+
+      function filterList(q) {
+        const qlc = String(q||'').trim().toLowerCase();
+        Array.from(list.children).forEach(li => {
+          const txt = (li.dataset.value||'').toLowerCase();
+          li.style.display = (!qlc || txt.includes(qlc)) ? '' : 'none';
+        });
+      }
+
+      updateSelectedUI();
+      // open / close
+      toggle.addEventListener('click', ()=> {
+        const open = toggle.getAttribute('aria-expanded') === 'true';
+        toggle.setAttribute('aria-expanded', !open);
+        panel.setAttribute('aria-hidden', open);
+        if (!open) search.focus();
+      });
+      // click items
+      list.addEventListener('click', (ev) => {
+        const li = ev.target.closest('li');
+        if (!li) return;
+        const cb = li.querySelector('input[type=checkbox]');
+        cb.checked = !cb.checked;
+        cb.dispatchEvent(new Event('change', { bubbles:true }));
+      });
+      list.addEventListener('change', (ev)=> updateSelectedUI());
+      // search
+      search.addEventListener('input', (e)=> filterList(e.target.value));
+      // actions
+      selectAllBtn.addEventListener('click', () => {
+        Array.from(list.querySelectorAll('li')).forEach(li => { if (li.style.display !== 'none') li.querySelector('input[type=checkbox]').checked = true; });
+        updateSelectedUI();
+      });
+      clearBtn.addEventListener('click', () => {
+        Array.from(list.querySelectorAll('input[type=checkbox]')).forEach(cb => cb.checked = false);
+        updateSelectedUI();
+      });
+      // close on outside click
+      document.addEventListener('click', (ev) => {
+        if (!ms.contains(ev.target)) { toggle.setAttribute('aria-expanded', false); panel.setAttribute('aria-hidden', true); }
+      });
+    })();
+
+    // init searchable multi-select for ceza daireleri (same behaviour as hukuksal)
+    (function initMultiSelectCeza() {
+      const select = document.getElementById('filter-ceza');
+      if (!select) return;
+      const ms = document.getElementById('ms-ceza');
+      const toggle = ms.querySelector('.ms-toggle');
+      const panel = ms.querySelector('.ms-panel');
+      const list = ms.querySelector('.ms-list');
+      const search = ms.querySelector('.ms-search');
+      const selectAllBtn = ms.querySelector('.ms-select-all');
+      const clearBtn = ms.querySelector('.ms-clear');
+      const label = ms.querySelector('.ms-label');
+      const countEl = ms.querySelector('.ms-count');
+
+      const options = Array.from(select.options).filter(o => o.value && o.value.trim());
+      options.forEach(opt => {
+        const li = document.createElement('li');
+        li.tabIndex = 0;
+        li.dataset.value = opt.value;
+        li.innerHTML = `<input type="checkbox" aria-label="${opt.value}" ${opt.selected ? 'checked' : ''} /> <div class="label">${opt.value}</div>`;
+        list.appendChild(li);
+      });
+
+      function updateSelectedUI() {
+        const checked = Array.from(list.querySelectorAll('input[type="checkbox"]:checked')).map(c => c.parentElement.dataset.value);
+        cezalist=checked;
+        countEl.textContent = checked.length ? `${checked.length} seçili` : '';
+        label.textContent = checked.length ? checked.slice(0,2).join(', ') + (checked.length>2 ? ' …' : '') : 'Ceza Dairesi seçiniz';
+        Array.from(select.options).forEach(opt => opt.selected = checked.includes(opt.value));
+      }
+
+      function filterList(q) {
+        const qlc = String(q||'').trim().toLowerCase();
+        Array.from(list.children).forEach(li => {
+          const txt = (li.dataset.value||'').toLowerCase();
+          li.style.display = (!qlc || txt.includes(qlc)) ? '' : 'none';
+        });
+      }
+
+      updateSelectedUI();
+      toggle.addEventListener('click', ()=> {
+        const open = toggle.getAttribute('aria-expanded') === 'true';
+        toggle.setAttribute('aria-expanded', !open);
+        panel.setAttribute('aria-hidden', open);
+        if (!open) search.focus();
+      });
+      list.addEventListener('click', (ev) => {
+        const li = ev.target.closest('li');
+        if (!li) return;
+        const cb = li.querySelector('input[type=checkbox]');
+        cb.checked = !cb.checked;
+        cb.dispatchEvent(new Event('change', { bubbles:true }));
+      });
+      list.addEventListener('change', (ev)=> updateSelectedUI());
+      search.addEventListener('input', (e)=> filterList(e.target.value));
+      selectAllBtn.addEventListener('click', () => {
+        Array.from(list.querySelectorAll('li')).forEach(li => { if (li.style.display !== 'none') li.querySelector('input[type=checkbox]').checked = true; });
+        updateSelectedUI();
+      });
+      clearBtn.addEventListener('click', () => {
+        Array.from(list.querySelectorAll('input[type=checkbox]')).forEach(cb => cb.checked = false);
+        updateSelectedUI();
+      });
+      document.addEventListener('click', (ev) => {
+        if (!ms.contains(ev.target)) { toggle.setAttribute('aria-expanded', false); panel.setAttribute('aria-hidden', true); }
+      });
+    })();
+
+    // sidebar expand toggle (kalıcı)
+    (function sidebarToggleInit() {
+      const toggle = document.getElementById('sidebar-toggle');
+      const container = document.querySelector('.container');
+      const sidebar = document.querySelector('.sidebar-filters');
+      if (!toggle || !container || !sidebar) return;
+
+      const KEY = 'sidebarExpanded';
+      function setExpanded(val) {
+        if (val) {
+          container.classList.add('expanded');
+          sidebar.classList.add('expanded');
+          toggle.textContent = 'Daralt';
+        } else {
+          container.classList.remove('expanded');
+          sidebar.classList.remove('expanded');
+          toggle.textContent = 'Genişlet';
+        }
+        localStorage.setItem(KEY, !!val ? '1' : '0');
+      }
+
+      const stored = localStorage.getItem(KEY) === '1';
+      setExpanded(stored);
+      toggle.addEventListener('click', () => setExpanded(!container.classList.contains('expanded')));
+    })();
+    // init searchable multi-select for kurullar (same behaviour)
+    (function initMultiSelectKurul() {
+      const select = document.getElementById('filter-kurul');
+      if (!select) return;
+      const ms = document.getElementById('ms-kurul');
+      const toggle = ms.querySelector('.ms-toggle');
+      const panel = ms.querySelector('.ms-panel');
+      const list = ms.querySelector('.ms-list');
+      const search = ms.querySelector('.ms-search');
+      const selectAllBtn = ms.querySelector('.ms-select-all');
+      const clearBtn = ms.querySelector('.ms-clear');
+      const label = ms.querySelector('.ms-label');
+      const countEl = ms.querySelector('.ms-count');
+
+      const options = Array.from(select.options).filter(o => o.value && o.value.trim());
+      options.forEach(opt => {
+        const li = document.createElement('li');
+        li.tabIndex = 0;
+        li.dataset.value = opt.value;
+        li.innerHTML = `<input type="checkbox" aria-label="${opt.value}" ${opt.selected ? 'checked' : ''} /> <div class="label">${opt.value}</div>`;
+        list.appendChild(li);
+      });
+
+      function updateSelectedUI() {
+        const checked = Array.from(list.querySelectorAll('input[type="checkbox"]:checked')).map(c => c.parentElement.dataset.value);
+        kurullarlist=checked
+        countEl.textContent = checked.length ? `${checked.length} seçili` : '';
+        label.textContent = checked.length ? checked.slice(0,2).join(', ') + (checked.length>2 ? ' …' : '') : 'Kurul seçiniz';
+        Array.from(select.options).forEach(opt => opt.selected = checked.includes(opt.value));
+      }
+
+      function filterList(q) {
+        const qlc = String(q||'').trim().toLowerCase();
+        Array.from(list.children).forEach(li => {
+          const txt = (li.dataset.value||'').toLowerCase();
+          li.style.display = (!qlc || txt.includes(qlc)) ? '' : 'none';
+        });
+      }
+
+      updateSelectedUI();
+      toggle.addEventListener('click', ()=> {
+        const open = toggle.getAttribute('aria-expanded') === 'true';
+        toggle.setAttribute('aria-expanded', !open);
+        panel.setAttribute('aria-hidden', open);
+        if (!open) search.focus();
+      });
+      list.addEventListener('click', (ev) => {
+        const li = ev.target.closest('li');
+        if (!li) return;
+        const cb = li.querySelector('input[type=checkbox]');
+        cb.checked = !cb.checked;
+        cb.dispatchEvent(new Event('change', { bubbles:true }));
+      });
+      list.addEventListener('change', (ev)=> updateSelectedUI());
+      search.addEventListener('input', (e)=> filterList(e.target.value));
+      selectAllBtn.addEventListener('click', () => {
+        Array.from(list.querySelectorAll('li')).forEach(li => { if (li.style.display !== 'none') li.querySelector('input[type=checkbox]').checked = true; });
+        updateSelectedUI();
+      });
+      clearBtn.addEventListener('click', () => {
+        Array.from(list.querySelectorAll('input[type=checkbox]')).forEach(cb => cb.checked = false);
+        updateSelectedUI();
+      });
+      document.addEventListener('click', (ev) => {
+        if (!ms.contains(ev.target)) { toggle.setAttribute('aria-expanded', false); panel.setAttribute('aria-hidden', true); }
+      });
+    })();
+    </script>
+</body>
+</html>

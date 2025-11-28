@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Karar — Yükleniyor…</title>
+  <meta name="description" content="Mahkeme kararının tam metni — okunabilir, PDF indirilebilir ve SEO uyumlu detay sayfası." />
+  <meta name="robots" content="index,follow" />
+  <link rel="canonical" href="" id="canonical" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Karar — Yükleniyor…" id="og-title" />
+  <meta property="og:description" content="Karar detayı" id="og-desc" />
+
+  <style>
+    :root{
+      --bg:#ffffff; --card:#ffffff; --muted:#6b7280; --text:#111827;
+      --accent:#ff7a18; --accent-2:#ffb86b; --edge: #fde8d6;
+      --radius:12px;
+    }
+    html,body{height:100%;background:linear-gradient(180deg,#fff,#fffdfb);margin:0;color:var(--text);font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+    header{display:flex;align-items:center;gap:14px;padding:18px 28px;border-bottom:1px solid rgba(17,24,39,0.06);background:linear-gradient(90deg,rgba(255,255,255,0.7),rgba(255,250,245,0.7))}
+    .logo{width:46px;height:46px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:18px}
+    .brand-title{font-weight:800;font-size:18px}
+    .brand-sub{font-size:12px;color:var(--muted)}
+    main.wrapper{max-width:1200px;margin:24px auto;padding:18px;display:grid;grid-template-columns:1fr 360px;gap:20px}
+    .reader{background:linear-gradient(180deg,#fff,#fff);border-radius:var(--radius);padding:28px;border:1px solid rgba(17,24,39,0.05);box-shadow: 0 8px 30px rgba(16,24,40,0.06);min-height:60vh}
+    .headline{font-size:22px;color:var(--text);font-weight:800;margin:4px 0 12px}
+    .metaRow{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+    .chip{background:var(--edge);padding:8px 10px;border-radius:999px;color:var(--accent);font-weight:700;font-size:13px;border:1px solid rgba(255,122,24,0.08)}
+    .detail-html{white-space:pre-wrap;line-height:1.7;font-size:16px;color:var(--text);padding:8px;border-radius:8px}
+    .controls{display:flex;gap:8px;margin-top:18px;align-items:center}
+    .btn{border-radius:10px;padding:10px 14px;border:none;cursor:pointer;font-weight:700}
+    .btn--orange{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#111;box-shadow:0 10px 28px rgba(255,122,24,0.12)}
+    .btn--red{background:linear-gradient(90deg,#ff4b4b,#b71c1c);color:#fff;box-shadow:0 10px 28px rgba(183,24,24,0.12)}
+    .side{display:flex;flex-direction:column;gap:14px}
+    .card{background:#fff;border-radius:12px;padding:14px;border:1px solid rgba(17,24,39,0.04);box-shadow:0 8px 18px rgba(16,24,40,0.03)}
+    .small{font-size:13px;color:var(--muted)}
+    .footer{margin-top:18px;color:var(--muted);font-size:13px}
+
+    /* full screen reader */
+    .reader.fullscreen { position:fixed; inset:0; z-index:1300;margin:0;border-radius:0;padding:38px; display:flex; flex-direction:column; background:linear-gradient(180deg,#fff,#fffdfb) }
+
+    /* progress */
+    #progressWrap{height:6px;background:linear-gradient(90deg,#fff0,#fff0);border-radius:999px;margin-bottom:16px}
+    #progress{height:6px;background:linear-gradient(90deg,var(--accent),var(--accent-2));width:0%;border-radius:999px;transition:width .14s linear}
+
+    @media (max-width:1024px){ main.wrapper{grid-template-columns:1fr; padding:14px} .side{order:2}}
+    @media print{ header,.side {display:none} main.wrapper{padding:0} .reader{border:none;background:white;color:black} }
+  </style>
+</head>
+<body>
+  <header role="banner">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="logo">HE</div>
+      <div>
+        <div class="brand-title">Karar — Detay</div>
+      </div>
+    </div>
+
+    <div style="margin-left:auto;display:flex;gap:10px;align-items:center">
+      <a href="/" class="btn" style="background:transparent;text-decoration: none; color: red; border:1px solid rgba(17,24,39,0.06);">← Listeye dön</a>
+      <div id="short-id" class="small">Yükleniyor…</div>
+    </div>
+  </header>
+
+  <main class="wrapper" role="main">
+    <section class="reader" id="reader" aria-labelledby="headline">
+      <div id="progressWrap" aria-hidden="true"><div id="progress"></div></div>
+
+      <div class="metaHead">
+        <div id="breadcrumb" class="small">Kararlar / Detay</div>
+        <h1 class="headline" id="headline">Yükleniyor…</h1>
+        <div class="metaRow" id="meta-row" aria-hidden="false"></div>
+      </div>
+
+      <article id="content" class="detail-html" tabindex="0">Yükleniyor…</article>
+
+      <div class="controls" role="toolbar" aria-label="Okuma kontrolleri">
+        <button id="btn-font-dec" class="btn" title="Küçült">A-</button>
+        <div id="font-size-ind" class="small">16px</div>
+        <button id="btn-font-inc" class="btn" title="Büyüt">A+</button>
+
+        <div style="flex:1"></div>
+
+        <button id="btn-print" class="btn" title="Yazdır" style="border:1px solid rgba(17,24,39,0.06)">Yazdır</button>
+        <button id="btn-fs" class="btn btn--orange" title="Tam ekran">Tam Ekran</button>
+        <button id="btn-download" class="btn btn--red" title="Kararı PDF olarak indir">PDF İndir</button>
+      </div>
+
+      <div class="footer">
+      </div>
+    </section>
+
+    <aside class="side" aria-label="Yan araçlar ve meta">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-size:13px;color:var(--muted)">Karar Bilgisi</div>
+            <div style="font-weight:800;margin-top:6px" id="mini-title">Yükleniyor…</div>
+          </div>
+        </div>
+
+        <div style="height:10px"></div>
+
+        <div id="meta-list" style="display:flex;flex-direction:column;gap:8px"></div>
+      </div>
+
+      <div class="card">
+        <div style="font-weight:700;margin-bottom:8px">Paylaş ve SEO</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button id="btn-copylink" class="btn" style="border:1px solid rgba(17,24,39,0.06)">Linki kopyala</button>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- jsPDF (text PDF oluşturma) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- html2pdf (html -> image/pdf) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+ 
+   <script>
+    // parse id from /detay/:id or ?id=
+    function getIdFromUrl(){
+      const p = location.pathname.split('/').filter(Boolean);
+      if (p[0] === 'detay' && p[1]) return decodeURIComponent(p[1]);
+      return new URLSearchParams(location.search).get('id') || null;
+    }
+
+    // sanitize / normalize helpers
+    function sanitizeHtml(html){
+      if(!html) return '';
+      let out = String(html);
+      out = out.replace(/<(script|iframe|object|embed|link|style|form)[^>]*>[\s\S]*?<\/\1>/gi,'');
+      out = out.replace(/<(script|iframe|object|embed|link|style)[^>]*\/?>/gi,'');
+      out = out.replace(/\son\w+=(".*?"|'.*?'|\S+)/gi,'');
+      out = out.replace(/\s(href|src)\s*=\s*(['"])\s*javascript:[^'"]*\2/gi,'');
+      return out;
+    }
+    function normalizeText(s){
+      if(!s) return '';
+      let out = String(s).replace(/\u00A0/g,' ').replace(/_+/g,'');
+      out = out.replace(/\r\n/g,'\n').replace(/\n{3,}/g,'\n\n');
+      out = out.replace(/[ \t]{2,}/g,' ');
+      try {
+        out = out.replace(/(\b\p{L}\b(?:\s+\b\p{L}\b){2,})/gu, m => m.replace(/\s+/g,''));
+      } catch(e) {
+        out = out.replace(/(?:\b[A-Za-zİıŞşĞğÜüÖöÇç]\b(?:\s+\b[A-Za-zİıŞşĞğÜüÖöÇç]\b){2,})/g, m => m.replace(/\s+/g,''));
+      }
+      return out.trim();
+    }
+
+    // jsPDF font helper (DejaVu)
+    async function arrayBufferToBase64(buffer){
+      let binary = '';
+      const bytes = new Uint8Array(buffer);
+      const chunk = 0x8000;
+      for (let i=0;i<bytes.length;i+=chunk) binary+=String.fromCharCode.apply(null, bytes.subarray(i,i+chunk));
+      return btoa(binary);
+    }
+    async function ensurePdfFont(){
+      if (!window.jspdf?.jsPDF) return;
+      if (window.__pdfFontsRegistered) return;
+      try {
+        const url = 'https://cdn.jsdelivr.net/npm/dejavu-fonts-ttf@2.37.1/ttf/DejaVuSans.ttf';
+        const r = await fetch(url);
+        if (!r.ok) throw new Error('font fetch failed');
+        const buf = await r.arrayBuffer();
+        const b64 = await arrayBufferToBase64(buf);
+        window.jspdf.jsPDF.API.addFileToVFS('DejaVuSans.ttf', b64);
+        window.jspdf.jsPDF.API.addFont('DejaVuSans.ttf','DejaVuSans','normal');
+        window.__pdfFontsRegistered = true;
+      } catch(e){
+        console.warn('font yüklenemedi', e);
+      }
+    }
+
+    // create text PDF
+    function createTextPdf(text, filename){
+      const jsPDFClass = window.jspdf?.jsPDF || window.jsPDF;
+      if (!jsPDFClass) return Promise.reject(new Error('jsPDF bulunamadı'));
+      const doc = new jsPDFClass({ unit:'mm', format:'a4', orientation:'portrait' });
+      const margin = 14;
+      const pageW = doc.internal.pageSize.getWidth();
+      const pageH = doc.internal.pageSize.getHeight();
+      const maxW = pageW - margin*2;
+      try{ doc.setFont('DejaVuSans','normal'); } catch(e){ doc.setFont('Times','Normal'); }
+      doc.setFontSize(11);
+      const lines = doc.splitTextToSize(text, maxW);
+      let y = margin;
+      const lineHeight = 6.8;
+      for (let i=0;i<lines.length;i++){
+        if (y + lineHeight > pageH - margin){ doc.addPage(); y = margin; }
+        doc.text(lines[i], margin, y);
+        y += lineHeight;
+      }
+      doc.save(filename);
+      return Promise.resolve();
+    }
+
+    // fetch from provided webhook — POST body format: { data: { id: NUMBER } }
+    async function fetchKararFromWebhook(id){
+      const url = 'https://axxlblgd.rpcld.app/webhook/getkarar';
+      try {
+        const resp = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({ data: { id: Number(id) } })
+        });
+        if (!resp.ok) throw new Error('Sunucu yanıtı ' + resp.status);
+        const json = await resp.json();
+        // endpoint muhtemelen { data: { ... } } veya benzeri; dönen yapıya göre normalize et
+        console.log()
+        return json[0].data;
+      } catch (e) {
+        console.error(e);
+        throw e;
+      }
+    }
+
+    (async function init(){
+      const id = getIdFromUrl() || '193693800'; // default örnek id
+      document.getElementById('short-id').textContent = '#' + id;
+
+      const headline = document.getElementById('headline');
+      const contentEl = document.getElementById('content');
+      const metaRow = document.getElementById('meta-row');
+      const metaList = document.getElementById('meta-list');
+      const mini = document.getElementById('mini-title');
+
+      try {
+        headline.textContent = 'Yükleniyor…';
+        const data = await fetchKararFromWebhook(id);
+
+        // normalize source data shape (data may contain nested data)
+        const payload = (data && typeof data === 'object' && Object.keys(data).length === 1 && data.data) ? data.data : data;
+        // typical fields: kararMetni, kararNo, kararTarihi, daire, ozet
+        const court = payload?.daire || payload?.court || payload?.daireAdi || '';
+        const date = payload?.kararTarihi || payload?.tarih || payload?.date || '';
+        const kararNo = payload?.kararNo || payload?.esasNo || payload?.no || '';
+        const rawText = (typeof payload === 'string') ? payload : (payload?.kararMetni || payload?.karar || payload?.metin || payload?.text || '');
+        const summary = payload?.ozet || payload?.summary || '';
+
+        // Öncelik: karar metninin ilk dolu satırı -> varsa headline olarak kullan
+        let firstLineTitle = '';
+        if (rawText) {
+          let textForTitle = typeof rawText === 'string' ? rawText : JSON.stringify(rawText);
+          if (/<\/?[a-z][\s\S]*>/i.test(textForTitle)) {
+            const tmpTitle = document.createElement('div');
+            tmpTitle.innerHTML = sanitizeHtml(textForTitle);
+            textForTitle = (tmpTitle.textContent || tmpTitle.innerText || textForTitle);
+          }
+          const lines = textForTitle.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+          firstLineTitle = (lines[0] || '').slice(0, 200);
+        }
+        const fallbackTitle = (payload?.baslik || payload?.title) || (summary ? summary.split(/[\.\r\n]+/)[0].slice(0,200) : (kararNo ? ('Karar ' + kararNo) : 'Karar ' + id));
+        const title = firstLineTitle || fallbackTitle;
+        const cleanTitle = normalizeText(String(title));
+
+        // SEO + UI update
+        document.title = cleanTitle + ' — Karar';
+        document.getElementById('canonical').href = location.href;
+        document.getElementById('og-title').content = cleanTitle;
+        document.getElementById('og-desc').content = (summary || String(rawText || '').slice(0,250)) || 'Mahkeme kararının tam metni';
+
+        headline.textContent = cleanTitle;
+        mini.textContent = cleanTitle;
+
+        // meta chips
+        metaRow.innerHTML = '';
+        if (court) metaRow.appendChild(makeChip(court));
+        if (date) metaRow.appendChild(makeChip(date));
+        if (kararNo) metaRow.appendChild(makeChip(kararNo));
+
+        // content rendering
+        if (rawText && /<\/?[a-z][\s\S]*>/i.test(String(rawText).trim())) {
+          const safe = sanitizeHtml(rawText);
+          // show readable plain nodes but preserve basic structure
+          const tmp = document.createElement('div'); tmp.innerHTML = safe;
+          contentEl.innerHTML = tmp.innerHTML;
+        } else {
+          contentEl.textContent = normalizeText(String(rawText || 'Karar metni bulunamadı.'));
+        }
+
+        // meta list key/value
+        metaList.innerHTML = '';
+        addMeta('ID', id);
+        if (kararNo) addMeta('Karar No', kararNo);
+        if (date) addMeta('Tarih', date);
+        if (court) addMeta('Daire', court);
+
+        // reading progress
+        const progress = document.getElementById('progress');
+        const onScroll = () => {
+          const el = contentEl;
+          const max = el.scrollHeight - el.clientHeight;
+          const pct = max <= 0 ? 0 : Math.round((el.scrollTop / max) * 100);
+          progress.style.width = pct + '%';
+        };
+        contentEl.addEventListener('scroll', onScroll);
+
+        // actions: print / copy / fullscreen / download
+        document.getElementById('btn-print').addEventListener('click', () => window.print());
+        document.getElementById('btn-copylink').addEventListener('click', async (ev) => {
+          try { await navigator.clipboard.writeText(location.href); ev.target.textContent = 'Kopyalandı'; setTimeout(()=>ev.target.textContent='Linki kopyala',1400); } catch(e){ alert('Kopyalama başarısız'); }
+        });
+
+      
+
+        const reader = document.getElementById('reader');
+        document.getElementById('btn-fs').addEventListener('click', async () => {
+          if (!document.fullscreenElement) {
+            try { await document.documentElement.requestFullscreen(); reader.classList.add('fullscreen'); } catch(e) { console.warn(e); }
+          } else {
+            await document.exitFullscreen(); reader.classList.remove('fullscreen');
+          }
+        });
+
+        // font size controls
+        let baseFS = 16;
+        const fontInd = document.getElementById('font-size-ind');
+        function updateFont(){ contentEl.style.fontSize = baseFS + 'px'; fontInd.textContent = baseFS + 'px'; }
+        document.getElementById('btn-font-inc').addEventListener('click', ()=>{ baseFS = Math.min(24, baseFS + 1); updateFont(); });
+        document.getElementById('btn-font-dec').addEventListener('click', ()=>{ baseFS = Math.max(12, baseFS - 1); updateFont(); });
+        updateFont();
+
+        // PDF download (raster / html2pdf -> önceki "resim gibi" davranış)
+        document.getElementById('btn-download').addEventListener('click', async (ev) => {
+          const btn = ev.currentTarget;
+          btn.disabled = true; btn.textContent = 'Hazırlanıyor…';
+          try {
+            // klonla: ekran stillerini bozmayacak temiz bir wrapper hazırla
+            const wrapper = document.createElement('div');
+            wrapper.style.background = '#ffffff';
+            wrapper.style.padding = '18px';
+            wrapper.style.width = '800px';
+            wrapper.style.boxSizing = 'border-box';
+
+            // başlık/metalar ve içerik ekle
+            const h = document.createElement('div');
+            h.style.fontWeight = '800';
+            h.style.fontSize = '18px';
+            h.style.color = '#111';
+            h.style.marginBottom = '8px';
+            h.textContent = (headline.textContent || ('Karar ' + id));
+            wrapper.appendChild(h);
+
+            // meta (kısa)
+            const metaWrap = document.createElement('div');
+            metaWrap.style.color = '#666';
+            metaWrap.style.marginBottom = '12px';
+            metaWrap.textContent = (metaRow.textContent || '');
+            wrapper.appendChild(metaWrap);
+
+            // içerik klonu
+            const clone = contentEl.cloneNode(true);
+            clone.style.maxWidth = '100%';
+            clone.style.whiteSpace = 'normal';
+            clone.style.fontSize = (getComputedStyle(contentEl).fontSize || '16px');
+            wrapper.appendChild(clone);
+
+            // html2pdf ayarları (html2canvas -> resim)
+            await html2pdf().set({
+              margin: 12,
+              filename: (cleanTitle.replace(/[\/\\\?\%\*:\|"<>]/g,'_').slice(0,120) || ('karar_' + id)) + '.pdf',
+              html2canvas: { scale: 2, useCORS: true, logging: false, allowTaint: true },
+              jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            }).from(wrapper).save();
+
+          } catch (e) {
+            console.error(e);
+            alert('PDF oluşturulurken hata oldu. Konsolu kontrol edin.');
+          } finally {
+            btn.disabled = false; btn.textContent = 'PDF İndir';
+          }
+        });
+
+      } catch (err) {
+        console.error(err);
+        document.getElementById('headline').textContent = 'Detay yüklenemedi';
+        document.getElementById('content').textContent = 'Karar verisi getirilemedi. Lütfen bağlantıyı ve ID\'yi kontrol edin.';
+      }
+
+      // helpers
+      function makeChip(txt){ const el = document.createElement('div'); el.className='chip'; el.textContent = txt; return el; }
+      function addMeta(k,v){ const row = document.createElement('div'); row.style.display='flex'; row.style.justifyContent='space-between'; row.style.gap='8px'; row.innerHTML = `<div class="small" style="color:var(--muted)">${escapeHtml(k)}</div><div style="font-weight:700">${escapeHtml(String(v||''))}</div>`; metaList.appendChild(row); }
+      function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+    })();
+  </script>
+</body>
+</html>
